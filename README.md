@@ -51,9 +51,9 @@ X, y = load_svmlight_file('training.svmlight')
 #To save the csr_matrix so that you do not have to load it again, you need to use the numpy save function
 #on the three arrays that comprise a csr_matrix
 
-save(X.data,'training_data.npy')
-save(X.indices,'training_indices.npy')
-save(X.indptr,'training_indptr.npy')
+save('training_data.npy',X.data)
+save('training_indices.npy',X.indices)
+save('training_indptr.npy',X.indptr)
 
 #We can now load back the csr_matrix much faster than we loaded it using svmlight_loader
 data = load('training_data.npy')
