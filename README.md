@@ -63,6 +63,13 @@ indptr = load('training_indptr.npy')
 X = csr_matrix((data,indices,indptr))
 ```
 
+For the deepnet package, you cannot save the sparse matrix as three separate numpy files. You have to save all three of these numpy arrays in a zipped archive. Because the normal savez command in numpy only works for files up to 4 GB, you have to do a little hacking and use a hidden package in numpy as follows:
+
+```
+from numpy.lib import npyio
+npyio.savez('TrainingFeatures.npz', data=X.data, indices=X.indices, indptr=X.indptr,shape=array(list(X.shape)))
+``` 
+
 Running neural network code
 ---------------------------
 
@@ -73,3 +80,14 @@ $ python sklearn_CADD_sgd.py -scale Impute1
 ```
 
 Note that the codes use stochastic gradient descent for training. Sklearn has L2-regularization for logistic regression while theano does not, hence the difference in their results. The scale flag tells the code to use the scikit-learn StandardScaler to scale the data before training. This is because training is sensitive to the variance of the data, so we need to make sure the features have unit variance first.
+
+Here is example on how to scale the data, using the same X and y from above:
+
+```
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+scaler.fit(X)  # Don't cheat - fit only on training data
+X = scaler.transform(X)
+X_test = scaler.transform(X_test)  # apply same transformation to test data
+```
+
