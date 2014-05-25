@@ -51,14 +51,16 @@ X, y = load_svmlight_file('training.svmlight')
 #To save the csr_matrix so that you do not have to load it again, you need to use the numpy save function
 #on the three arrays that comprise a csr_matrix
 
-save('training_data.npy',X.data)
-save('training_indices.npy',X.indices)
-save('training_indptr.npy',X.indptr)
+save('training.data.npy',X.data)
+save('training.indices.npy',X.indices)
+save('training.indptr.npy',X.indptr)
+save('training.labels.npy',y)
 
 #We can now load back the csr_matrix much faster than we loaded it using svmlight_loader
-data = load('training_data.npy')
-indices = load('training_indices.npy')
-indptr = load('training_indptr.npy')
+data = load('training.data.npy')
+indices = load('training.indices.npy')
+indptr = load('training.indptr.npy')
+y = load('training.labels.npy')
 
 X = csr_matrix((data,indices,indptr))
 ```
@@ -73,7 +75,7 @@ npyio.savez('TrainingFeatures.npz', data=X.data, indices=X.indices, indptr=X.ind
 Running neural network code
 ---------------------------
 
-Looking into the help to see how to run the Python neural network codes. I wrote a logistic regression and a multilayer perceptron trainer for both scikit-learn and theano. Make sure you have the csr array files for testing and training stored in a dataset folder in '../data/'. For example, suppose I am in the folder containing the Python code, and I have a folder '../data/Impute1/' containing 'training_data.npy', 'training_indices.npy', 'training_indptr.npy', 'testing_data.npy', 'testing_indices.npy', 'testing_indptr.npy'. Then, to run the sklearn logistic regression classifier:
+Looking into the help to see how to run the Python neural network codes. I wrote a logistic regression and a multilayer perceptron trainer for both scikit-learn and theano. Make sure you have the csr array files for testing and training stored in a dataset folder in '../data/'. For example, suppose I am in the folder containing the Python code, and I have a folder '../data/Impute1/' containing 'training.data.npy', 'training.indices.npy', 'training.indptr.npy', 'training.labels.npy', 'testing.data.npy', 'testing.indices.npy', 'testing.indptr.npy', 'testing.labels.npy'. Then, to run the sklearn logistic regression classifier:
 
 ```
 $ python sklearn_CADD_sgd.py -scale Impute1
