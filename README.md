@@ -126,3 +126,14 @@ You will need to do this for validation and test sets as well. Try to do some ar
 Put the data into a folder. You will need to modify 4 .pbtxt files. I included all of them in the deepnet folder. cadd.pbtxt specifies the locations of the data and labels and specifies how much cpu/gpu memory to use. eval.pbtxt specifies the batch size used for evaluating the test and validation set. eval.pbtxt can also set the options for the stop condition based on evaluating the testing/validation sets, but I have not explored this. model.pbtxt specifies the modify, such as number of hidden units and layers, the objective function, and the activation units to use. train.pbtxt specifies the training algorithm to use, the stop condition to use, the minibatch size, when to evaluate the test/validation sets, and how often to save the results. Each step evaluates one minibatch, so you will have to do some math to determine how many steps corresponds to an epoch. train.pbtxt also references the proto file cadd.pbtxt. When everything looks good, run with './runall.sh'. 
 
 
+LIBOCAS
+=======
+
+This is the SVM algorithm the original CADD authors used. Download the source code from [here] (http://cmp.felk.cvut.cz/~xfrancv/ocas/html/). Hopefully it is straightforward for you to compile and run their test examples. You can use the training.svmlight and testing.svmlight files you generated earlier to train this. The original authors used C parameter of 0.0025. You can also run it with multiple threads. I also included my LIBOCAS output for reference.
+
+```
+./svmocas -c 0.0025 training.svmlight cadd.model
+./linclassif -e -o myoutput.pred testing.svmlight cadd.model
+```
+
+The first line trains a model and saves it to cadd.model. The second line uses the model saved in cadd.model to predict the testing data and outputs the results to myoutput.pred.
