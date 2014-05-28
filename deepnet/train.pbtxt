@@ -1,0 +1,14 @@
+optimizer: GRADIENT_DESCENT
+stopcondition {
+  all_processed: false
+  steps: 57600
+}
+train: true
+batchsize: 1000
+data_proto: "/w2/dxquang/DeepCADD/data/DeepnetData1/cadd.pbtxt"
+eval_after: 2880
+checkpoint_after: 28800
+checkpoint_directory: "/w2/dxquang/DeepCADD/data/DeepnetData1/output"
+randomize: false
+show_after: 2880
+verbose: true

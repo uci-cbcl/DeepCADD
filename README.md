@@ -46,10 +46,11 @@ from scipy.sparse import csr_matrix
 from svmlight_loader import load_svmlight_file
 
 #will load the training file. The same can be done for the testing file.
-X, y = load_svmlight_file('training.svmlight')
+X, y = load_svmlight_file('training.svmlight', dtype='float32')
 #X is a csr_matrix of the features and y is an array of the labels (-1 for observed, 1 for simulated)
 #To save the csr_matrix so that you do not have to load it again, you need to use the numpy save function
 #on the three arrays that comprise a csr_matrix
+#It is recommended to save as float32 because GPUs only work with float32. It will save you memory too.
 
 save('training.data.npy',X.data)
 save('training.indices.npy',X.indices)
@@ -92,4 +93,36 @@ scaler.fit(X)  # Don't cheat - fit only on training data
 X = scaler.transform(X)
 X_test = scaler.transform(X_test)  # apply same transformation to test data
 ```
+
+deepnet
+=======
+
+For the deepnet package, you cannot simply use the same files as before. The features must be saved into a single .npz file, not as three separate matrices for the CSR format. Unfortunately, there is a nasty bug in Python that prevents you from saving zip files bigger than 4GB. If you try to do this directly, you will get an error that says: 'L' format requires 0 <= number <= 4294967295. To fix the bug, you must first find where zipfile.py is located. Here is a sample of how I did it from IPython:
+
+```
+In [1]: import zipfile
+
+In [2]: print zipfile
+<module 'zipfile' from '/data/users/dxquang/Canopy/appdata/canopy-1.3.0.1715.rh5-x86_64/lib/python2.7/zipfile.py'>
+```
+
+Once you located zipfile.py, you must patch. Download the patch file [here] (http://bugs.python.org/file18685/zipfile_zip64_header.patch). Put the patch file in the same folder as zipfile.py, cd into that folder, and type the following:
+
+```
+patch zipfile.py < zipfile_zip64_header.patch
+```
+
+Now you are ready to save CSR matrices in .npz format. Using the same 'X' from above:
+
+```
+In [1]: from numpy.lib import npyio
+
+In [2]: npyio.savez('train.npz', data=X.data, indices=X.indices, indptr=X.indptr, shape=array(list(X.shape)))
+
+```
+
+You will need to do this for validation and test sets as well. Try to do some array slicing to get a validation set. I personally use training/validation/testing sizes of 28800000/296000/294000. Save the labels in appropriately named .npy files as well. I also recommend doing the shuffling ahead of time (sklearn.utils.shuffle can help). 
+
+Put the data into a folder. You will need to modify 4 .pbtxt files. I included all of them in the deepnet folder. cadd.pbtxt specifies the locations of the data and labels and specifies how much cpu/gpu memory to use. eval.pbtxt specifies the batch size used for evaluating the test and validation set. eval.pbtxt can also set the options for the stop condition based on evaluating the testing/validation sets, but I have not explored this. model.pbtxt specifies the modify, such as number of hidden units and layers, the objective function, and the activation units to use. train.pbtxt specifies the training algorithm to use, the stop condition to use, the minibatch size, when to evaluate the test/validation sets, and how often to save the results. Each step evaluates one minibatch, so you will have to do some math to determine how many steps corresponds to an epoch. train.pbtxt also references the proto file cadd.pbtxt. When everything looks good, run with './runall.sh'. 
+
 

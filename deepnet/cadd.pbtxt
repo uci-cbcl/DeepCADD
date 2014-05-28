@@ -1,0 +1,48 @@
+name: "cadd"
+data {
+  name: "train_data"
+  file_pattern: "/w2/dxquang/DeepCADD/data/DeepnetData1/train.npz"
+  size: 28800000
+  dimensions: 949
+  stats_file: "cadd_stats.npz"
+}
+data {
+  name: "train_labels"
+  file_pattern: "/w2/dxquang/DeepCADD/data/DeepnetData1/train_labels.npy"
+  size: 28800000
+  dimensions: 1
+  num_labels: 2
+  sparse: true
+}
+data {
+  name: "validation_data"
+  file_pattern: "/w2/dxquang/DeepCADD/data/DeepnetData1/valid.npz"
+  size: 296543
+  dimensions: 949
+  stats_file: "cadd_stats.npz"
+}
+data {
+  name: "validation_labels"
+  file_pattern: "/w2/dxquang/DeepCADD/data/DeepnetData1/valid_labels.npy"
+  size: 296543
+  dimensions: 1
+  num_labels: 2
+  sparse: true
+}
+data {
+  name: "test_data"
+  file_pattern: "/w2/dxquang/DeepCADD/data/DeepnetData1/test.npz"
+  size: 294133
+  dimensions: 949
+  stats_file: "cadd_stats.npz"
+}
+data {
+  name: "test_labels"
+  file_pattern: "/w2/dxquang/DeepCADD/data/DeepnetData1/test_labels.npy"
+  size: 294133
+  dimensions: 1
+  num_labels: 2
+  sparse: true
+}
+gpu_memory: "5G"
+main_memory: "40G"
