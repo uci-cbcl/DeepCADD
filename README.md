@@ -132,6 +132,7 @@ In [2]: y[y == -1] = 0#replace -1 values with 0
 In [3]: y = y.astype('int64')#for consistency with the deepnet author data, but I think float32 and int32 will work fine too
 
 In [4]: save('train.newlabels.npy',y)#save the data
+
 ```
 Put the data into a folder. You will need to modify 4 .pbtxt files. I included all of them in the deepnet folder. cadd.pbtxt specifies the locations of the data and labels and specifies how much cpu/gpu memory to use. eval.pbtxt specifies the batch size used for evaluating the test and validation set. eval.pbtxt can also set the options for the stop condition based on evaluating the testing/validation sets, but I have not explored this. model.pbtxt specifies the modify, such as number of hidden units and layers, the objective function, and the activation units to use. train.pbtxt specifies the training algorithm to use, the stop condition to use, the minibatch size, when to evaluate the test/validation sets, and how often to save the results. Each step evaluates one minibatch, so you will have to do some math to determine how many steps corresponds to an epoch. train.pbtxt also references the proto file cadd.pbtxt. When everything looks good, run with './runall.sh'. 
 
