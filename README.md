@@ -148,3 +148,27 @@ This is the SVM algorithm the original CADD authors used. Download the source co
 ```
 
 The first line trains a model and saves it to cadd.model. The second line uses the model saved in cadd.model to predict the testing data and outputs the results to myoutput.pred.
+
+ROC Analysis
+============
+
+I modified two files in the deepnet library: util.py and neuralnet.py. I uploaded the modified python scripts onto the github. Replace the files in your deepnet/deepnet folder with these two files. To make deepnet output the posterior probabilities, you need to set the compute_MAP boolean to true in the output layer's performance states in the model.pbtxt file. Your model.pbtxt file should have these lines now:
+
+```
+performance_stats {
+  compute_cross_entropy: true
+  compute_correct_preds: true
+  compute_MAP: true  
+}
+```
+
+I modified util.py and neuralnet.py so that deepnet will not actually calculate the MAP, but instead output the posterior probabilities and the correct labels in the checkpoint directory. It will do this for both the validation set and testing set. The files will have the same name as their corresponding checkpoint file, plus "_valid_preds.npy", "_valid_targets.npy", "_test_preds.npy", "_test_targets.npy" appended at the end of the filename. the "_preds.npy" files contain the posterior probabilities of each sample while the "_targets.npy" files contain the correct labels for each sample. I've also included a script that will accept two .npy files and plot a ROC curve for you. Go [here] (http://scikit-learn.org/stable/auto_examples/plot_roc.html) if you would like to learn more about generating ROC curves.
+
+Here is an example of me using the ROC plotting script on the last checkpoint test file arrays. In theory, this should work for the best output as well, but I have not checked this. 
+
+```
+$ python ROC_plotter.py cadd_3layer_relu_train_op_LAST_test_preds.npy cadd_3layer_relu_train_op_LAST_test_targets.npy
+Area under the ROC curve : 0.673855 
+```
+
+Hopefully you can get an area better than what I got.
