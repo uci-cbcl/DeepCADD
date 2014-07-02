@@ -172,3 +172,17 @@ Area under the ROC curve : 0.673855
 ```
 
 Hopefully you can get an area better than what I got.
+
+Generating the proper test files
+================================
+
+After constantly e-mailing the original CADD authors, they finally gave me some scripts to convert the output from their CADD online service into the proper format. All files are in the Testing/Jul2 folder. The svmlight file you need for testing is Jul2_testing.svmlight. Below are all the command lines I used to generate the file in case you want to follow:
+
+```
+awk '{print $1"\t"$2"\t.\t"$3"\t"$5}' ESP6500SI.V2.MAF5.anno_all.tsv > ESP6500.vcf
+awk '{print $1"\t"$2"\t.\t"$3"\t"$5}' clinvar_20140303_pathogenic.anno_all.tsv > clinvar.vcf
+#submitted both vcf files to the CADD online service to get _CADD.tsv files
+cat clinvar_CADD.tsv | python impute_mod.py | python impute2csv_mod.py > clinvar_imputed.csv
+cat ESP6500_CADD.tsv | python impute_mod.py | python impute2csv_mod.py > ESP6500_imputed.csv
+python csv2svmlight.py 
+```
